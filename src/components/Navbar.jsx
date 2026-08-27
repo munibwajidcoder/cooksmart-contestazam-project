@@ -14,6 +14,66 @@ const navLinks = [
   { name: 'Contact', path: '/contact', icon: Mail },
 ];
 
+const panelVariants = {
+  hidden: { opacity: 0, y: -20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: {
+      duration: 0.3,
+      ease: [0.25, 0.1, 0.25, 1],
+      when: "beforeChildren",
+      staggerChildren: 0.08
+    }
+  },
+  exit: {
+    opacity: 0,
+    y: -20,
+    transition: {
+      duration: 0.25,
+      ease: [0.25, 0.1, 0.25, 1],
+      when: "afterChildren",
+      staggerChildren: 0.05,
+      staggerDirection: -1
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }
+  },
+  exit: {
+    opacity: 0,
+    y: 15,
+    transition: { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }
+  }
+};
+
+const AnimatedHamburger = ({ isOpen }) => (
+  <div className="w-[22px] h-[16px] relative flex flex-col justify-between items-center">
+    <motion.span
+      animate={isOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+      className={`w-full h-[2.5px] rounded-full absolute top-0 left-0 ${isOpen ? 'bg-orange-400' : 'bg-current'}`}
+    />
+    <motion.span
+      animate={isOpen ? { opacity: 0 } : { opacity: 1 }}
+      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+      className={`w-full h-[2.5px] rounded-full absolute top-[7px] left-0 ${isOpen ? 'bg-orange-400' : 'bg-current'}`}
+    />
+    <motion.span
+      animate={isOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+      className={`w-full h-[2.5px] rounded-full absolute bottom-0 left-0 ${isOpen ? 'bg-orange-400' : 'bg-current'}`}
+    />
+  </div>
+);
+
+
 export default function Navbar({ onOpenAI, onOpenUserPreference }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -106,7 +166,7 @@ export default function Navbar({ onOpenAI, onOpenUserPreference }) {
             aria-label="Toggle navigation menu"
             className="lg:hidden w-10 h-10 rounded-2xl bg-[#181B26] border border-white/10 hover:border-orange-500/40 flex items-center justify-center text-gray-300 hover:text-white transition-all ml-1 shrink-0 cursor-pointer"
           >
-            {mobileMenuOpen ? <X size={20} className="text-orange-400" /> : <Menu size={20} />}
+            <AnimatedHamburger isOpen={mobileMenuOpen} />
           </button>
         </div>
       </div>
@@ -126,10 +186,10 @@ export default function Navbar({ onOpenAI, onOpenUserPreference }) {
 
             {/* Menu Panel */}
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.25, ease: 'easeOut' }}
+              variants={panelVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
               className="lg:hidden fixed top-20 left-0 right-0 max-h-[calc(100vh-5rem)] overflow-y-auto bg-[#0F111A] border-b border-white/10 shadow-2xl z-50 px-6 py-6"
             >
               <div className="flex flex-col gap-2">
@@ -137,27 +197,28 @@ export default function Navbar({ onOpenAI, onOpenUserPreference }) {
                   const isActive = location.pathname === link.path || (link.path === '/' && location.pathname === '');
                   const Icon = link.icon;
                   return (
-                    <Link
-                      key={link.name}
-                      to={link.path}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-base font-bold transition-all ${
-                        isActive
-                          ? 'bg-gradient-to-r from-orange-500/20 to-amber-500/10 text-orange-400 border border-orange-500/30'
-                          : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent'
-                      }`}
-                    >
-                      <Icon size={18} className={isActive ? 'text-orange-400' : 'text-gray-400'} />
-                      <span className="font-['Outfit']">{link.name}</span>
-                      {isActive && (
-                        <span className="ml-auto w-2 h-2 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
-                      )}
-                    </Link>
+                    <motion.div key={link.name} variants={itemVariants}>
+                      <Link
+                        to={link.path}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className={`flex items-center gap-3.5 px-4 py-3.5 rounded-2xl text-base font-bold transition-all ${
+                          isActive
+                            ? 'bg-gradient-to-r from-orange-500/20 to-amber-500/10 text-orange-400 border border-orange-500/30'
+                            : 'text-gray-300 hover:text-white hover:bg-white/5 border border-transparent'
+                        }`}
+                      >
+                        <Icon size={18} className={isActive ? 'text-orange-400' : 'text-gray-400'} />
+                        <span className="font-['Outfit']">{link.name}</span>
+                        {isActive && (
+                          <span className="ml-auto w-2 h-2 rounded-full bg-orange-400 shadow-[0_0_8px_rgba(249,115,22,0.8)]" />
+                        )}
+                      </Link>
+                    </motion.div>
                   );
                 })}
 
                 {/* Mobile CTA */}
-                <div className="pt-4 mt-2 border-t border-white/10 flex flex-col gap-3">
+                <motion.div variants={itemVariants} className="pt-4 mt-2 border-t border-white/10 flex flex-col gap-3">
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
@@ -177,7 +238,7 @@ export default function Navbar({ onOpenAI, onOpenUserPreference }) {
                   >
                     <span>👤</span> Manage Dietary Preferences
                   </button>
-                </div>
+                </motion.div>
               </div>
             </motion.div>
           </>
