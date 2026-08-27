@@ -38,10 +38,24 @@ export default function AddToMealPlannerModal({ isOpen, onClose, recipe, onSucce
 
   if (!isOpen || !recipe) return null;
 
-  const handleAddToPlan = () => {
+  const handleAddToPlan = async () => {
     try {
+      const userId = localStorage.getItem('cooksmart_user_id');
+      if (!userId) {
+        alert('❌ Please create a profile (Sign In) first to add meals!');
+        return;
+      }
+
       const savedPlan = localStorage.getItem('cooksmart_meal_plan');
-      let currentPlan = savedPlan ? JSON.parse(savedPlan) : {};
+      let currentPlan = savedPlan ? JSON.parse(savedPlan) : {
+        mon: { breakfast: null, lunch: null, dinner: null },
+        tue: { breakfast: null, lunch: null, dinner: null },
+        wed: { breakfast: null, lunch: null, dinner: null },
+        thu: { breakfast: null, lunch: null, dinner: null },
+        fri: { breakfast: null, lunch: null, dinner: null },
+        sat: { breakfast: null, lunch: null, dinner: null },
+        sun: { breakfast: null, lunch: null, dinner: null },
+      };
 
       if (!currentPlan[selectedDay]) {
         currentPlan[selectedDay] = {};
@@ -54,8 +68,25 @@ export default function AddToMealPlannerModal({ isOpen, onClose, recipe, onSucce
         image: recipe.image || '/images/cat_dinner_3d.jpg',
       };
 
+      // 1. Save Locally
       localStorage.setItem('cooksmart_meal_plan', JSON.stringify(currentPlan));
       setIsSaved(true);
+
+      // 2. Save to Backend MongoDB
+      const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      console.log(`🚀 Sending meal plan to backend for user: ${userId}`);
+      
+      const res = await fetch(`${API_URL}/api/meals`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, weekData: currentPlan }),
+      });
+      
+      if (!res.ok) {
+        console.error('❌ Failed to save meal plan, status:', res.status);
+      } else {
+        console.log('✅ Meal plan saved to MongoDB Atlas successfully!');
+      }
 
       if (onSuccess) {
         onSuccess(selectedDay, selectedMeal);

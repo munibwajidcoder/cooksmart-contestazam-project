@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowRight, ChevronRight, Code2, Layers, Database, Cpu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import Card3D from '../components/Card3D';
 
 // ── Team data ─────────────────────────────────────────────────────────────────
 const TEAM = [
@@ -190,7 +191,7 @@ export default function AboutUs() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               onClick={() => navigate('/recipes')}
-              className="btn-gradient-orange text-white px-7 py-3.5 rounded-full font-bold text-sm shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 inline-flex items-center gap-2 transition-all"
+              className="btn-3d btn-gradient-orange text-white px-7 py-3.5 rounded-full font-bold text-sm shadow-lg shadow-orange-500/25 hover:shadow-orange-500/40 inline-flex items-center gap-2 transition-all"
             >
               Explore Recipes <ArrowRight size={15} />
             </motion.button>
@@ -247,13 +248,13 @@ export default function AboutUs() {
         <section className="mb-16">
           <div className="flex items-center gap-4 mb-10">
             <div className="flex-1 h-px bg-gradient-to-r from-transparent to-orange-500/30" />
-            <h2 className="text-2xl sm:text-3xl font-black text-white font-['Outfit'] text-center whitespace-nowrap">
-              What Makes <span className="text-gradient-orange">CookSmart</span> Different
+            <h2 className="text-2xl sm:text-3xl font-black text-white font-['Outfit'] text-center">
+              What Makes CookSmart <span className="text-gradient-orange">Different</span>
             </h2>
             <div className="flex-1 h-px bg-gradient-to-l from-transparent to-orange-500/30" />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 perspective-container">
             {FEATURES.map((f, i) => (
               <motion.div
                 key={i}
@@ -261,20 +262,24 @@ export default function AboutUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-[#12141D] border border-white/6 hover:border-orange-500/20 rounded-3xl p-7 sm:p-8 flex flex-col items-start gap-5 transition-all hover:-translate-y-1 shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+                className="h-full"
               >
-                <div className="flex items-center gap-4 w-full">
-                  <div className="w-9 h-9 rounded-full bg-orange-500 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-md shadow-orange-500/30 font-['Outfit']">
-                    {f.num}
+                <Card3D intensity={10} className="h-full">
+                  <div className="bg-[#12141D] h-full border border-white/6 hover:border-orange-500/20 rounded-3xl p-7 sm:p-8 flex flex-col items-start gap-5 transition-all shadow-[0_4px_30px_rgba(0,0,0,0.4)]">
+                    <div className="flex items-center gap-4 w-full transform translate-z-[15px]">
+                      <div className="w-9 h-9 rounded-full bg-orange-500 text-white font-black text-sm flex items-center justify-center shrink-0 shadow-md shadow-orange-500/30 font-['Outfit']">
+                        {f.num}
+                      </div>
+                      <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-4xl border ${f.bg} shrink-0`}>
+                        {f.icon}
+                      </div>
+                    </div>
+                    <div className="transform translate-z-[25px]">
+                      <h3 className="text-lg font-black text-white mb-2 font-['Outfit']">{f.title}</h3>
+                      <p className="text-gray-400 text-sm leading-relaxed font-['Plus_Jakarta_Sans']">{f.desc}</p>
+                    </div>
                   </div>
-                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center text-4xl border ${f.bg} shrink-0`}>
-                    {f.icon}
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-white mb-2 font-['Outfit']">{f.title}</h3>
-                  <p className="text-gray-400 text-sm leading-relaxed font-['Plus_Jakarta_Sans']">{f.desc}</p>
-                </div>
+                </Card3D>
               </motion.div>
             ))}
           </div>
@@ -347,7 +352,7 @@ export default function AboutUs() {
           </div>
 
           {/* 4-column team grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 perspective-container">
             {TEAM.map((member, i) => (
               <motion.div
                 key={i}
@@ -355,63 +360,69 @@ export default function AboutUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className={`relative bg-[#12141D] border ${member.borderColor} hover:border-opacity-60 rounded-3xl p-6 flex flex-col items-center text-center transition-all hover:-translate-y-1.5 shadow-[0_4px_30px_rgba(0,0,0,0.4)] overflow-hidden group`}
+                className="h-full"
               >
-                {/* Top glow */}
-                <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-32 h-16 ${member.glowColor} rounded-full blur-2xl pointer-events-none`} />
+                <Card3D intensity={15} className="h-full">
+                  <div className={`relative bg-[#12141D] h-full border ${member.borderColor} hover:border-opacity-60 rounded-3xl p-6 flex flex-col items-center text-center transition-all shadow-[0_4px_30px_rgba(0,0,0,0.4)] overflow-hidden group`}>
+                    {/* Top glow */}
+                    <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-32 h-16 ${member.glowColor} rounded-full blur-2xl pointer-events-none`} />
 
-                {/* Avatar */}
-                <div className="relative mb-4 z-10">
-                  <div className={`w-24 h-24 rounded-full overflow-hidden border-2 ${member.borderColor} shadow-xl`}>
-                    <img
-                      src="/images/team_avatars.jpg"
-                      alt={member.name}
-                      className="w-[200%] h-[200%] object-cover"
-                      style={{
-                        objectFit: 'cover',
-                        transform: `translate(${member.avatarIndex % 2 === 1 ? '-50%' : '0%'}, ${member.avatarIndex >= 2 ? '-50%' : '0%'})`
-                      }}
-                      onError={e => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center text-4xl bg-[#1a1c27]">👨‍💻</div>`;
-                      }}
-                    />
+                    {/* Avatar */}
+                    <div className="relative mb-4 z-10 transform translate-z-[15px]">
+                      <div className={`w-24 h-24 rounded-full overflow-hidden border-2 ${member.borderColor} shadow-xl`}>
+                        <img
+                          src="/images/team_avatars.jpg"
+                          alt={member.name}
+                          className="w-[200%] h-[200%] object-cover"
+                          style={{
+                            objectFit: 'cover',
+                            transform: `translate(${member.avatarIndex % 2 === 1 ? '-50%' : '0%'}, ${member.avatarIndex >= 2 ? '-50%' : '0%'})`
+                          }}
+                          onError={e => {
+                            e.target.style.display = 'none';
+                            e.target.parentElement.innerHTML = `<div class="w-full h-full flex items-center justify-center text-4xl bg-[#1a1c27]">👨‍💻</div>`;
+                          }}
+                        />
+                      </div>
+                      {/* Online indicator */}
+                      <div className="absolute bottom-0.5 right-0.5 w-4 h-4 rounded-full bg-green-500 border-2 border-[#12141D] shadow-md" />
+                    </div>
+
+                    <div className="transform translate-z-[25px] flex flex-col items-center flex-1">
+                      {/* Name */}
+                      <h3 className="text-white font-black text-base mb-1 font-['Outfit'] z-10 relative">{member.name}</h3>
+
+                      {/* Primary Role badge */}
+                      <span className={`bg-gradient-to-r ${member.roleColor} text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-wider mb-1 shadow-md z-10 relative flex items-center gap-1`}>
+                        {member.icon}
+                        {member.role}
+                      </span>
+
+                      {/* Sub role */}
+                      {member.roleSub && (
+                        <span className="text-gray-500 text-[10px] font-semibold mb-3 z-10 relative">{member.roleSub}</span>
+                      )}
+
+                      {/* Bio */}
+                      <p className="text-gray-400 text-xs leading-relaxed mb-5 mt-2 font-['Plus_Jakarta_Sans'] z-10 relative">
+                        {member.bio}
+                      </p>
+
+                      {/* Social icons */}
+                      <div className="flex items-center gap-2 mt-auto z-10 relative">
+                        {member.socials.map((s, si) => (
+                          <a
+                            key={si}
+                            href={s.href}
+                            className={`w-8 h-8 rounded-full btn-3d ${s.bg} flex items-center justify-center text-white text-xs font-black hover:opacity-80 transition-all`}
+                          >
+                            {s.label}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                  {/* Online indicator */}
-                  <div className="absolute bottom-0.5 right-0.5 w-4 h-4 rounded-full bg-green-500 border-2 border-[#12141D] shadow-md" />
-                </div>
-
-                {/* Name */}
-                <h3 className="text-white font-black text-base mb-1 font-['Outfit'] z-10 relative">{member.name}</h3>
-
-                {/* Primary Role badge */}
-                <span className={`bg-gradient-to-r ${member.roleColor} text-white text-[9px] font-black px-3 py-1 rounded-full uppercase tracking-wider mb-1 shadow-md z-10 relative flex items-center gap-1`}>
-                  {member.icon}
-                  {member.role}
-                </span>
-
-                {/* Sub role */}
-                {member.roleSub && (
-                  <span className="text-gray-500 text-[10px] font-semibold mb-3 z-10 relative">{member.roleSub}</span>
-                )}
-
-                {/* Bio */}
-                <p className="text-gray-400 text-xs leading-relaxed mb-5 mt-2 font-['Plus_Jakarta_Sans'] z-10 relative">
-                  {member.bio}
-                </p>
-
-                {/* Social icons */}
-                <div className="flex items-center gap-2 mt-auto z-10 relative">
-                  {member.socials.map((s, si) => (
-                    <a
-                      key={si}
-                      href={s.href}
-                      className={`w-8 h-8 rounded-full ${s.bg} flex items-center justify-center text-white text-xs font-black hover:opacity-80 hover:scale-110 transition-all`}
-                    >
-                      {s.label}
-                    </a>
-                  ))}
-                </div>
+                </Card3D>
               </motion.div>
             ))}
           </div>
@@ -439,7 +450,7 @@ export default function AboutUs() {
 
           <button
             onClick={() => navigate('/recipes')}
-            className="relative z-10 btn-gradient-orange text-white px-7 py-3.5 rounded-full font-bold text-sm shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 inline-flex items-center gap-2 transition-all whitespace-nowrap"
+            className="relative z-10 btn-3d btn-gradient-orange text-white px-7 py-3.5 rounded-full font-bold text-sm shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 inline-flex items-center gap-2 transition-all whitespace-nowrap"
           >
             Browse Recipes <ArrowRight size={15} />
           </button>

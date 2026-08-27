@@ -3,6 +3,7 @@ import { ArrowRight, ChevronDown, Heart, Clock, Flame, Users, Sparkles, Utensils
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { allRecipes } from '../data/recipesData';
+import Card3D from '../components/Card3D';
 
 export default function Categories() {
   const navigate = useNavigate();
@@ -194,88 +195,93 @@ export default function Categories() {
         </div>
 
         {/* ══════════════════════ CATEGORY CARDS ══════════════════════ */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16 perspective-container">
           {CATEGORIES.map((cat, i) => (
             <motion.article
               key={cat.id}
               initial={{ opacity: 0, y: 28 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.08 }}
-              onClick={() => navigate(`/recipes?category=${cat.name}`)}
-              className={`
-                ${cat.fullWidth ? 'md:col-span-2' : ''}
-                relative flex flex-row items-stretch
-                rounded-3xl overflow-hidden cursor-pointer group
-                bg-gradient-to-r ${cat.cardBg}
-                border ${cat.border}
-                transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl
-                min-h-[200px] sm:min-h-[215px]
-                ${cat.fullWidth ? 'md:min-h-[230px]' : ''}
-              `}
-              style={{ boxShadow: `0 8px 32px -6px ${cat.glow}` }}
+              className={`${cat.fullWidth ? 'md:col-span-2' : ''} h-full`}
             >
-              {/* ── Radial glow layer ── */}
-              <div
-                className="absolute inset-0 pointer-events-none"
-                style={{
-                  background: `radial-gradient(ellipse at 35% 50%, ${cat.glow} 0%, transparent 65%)`,
-                }}
-              />
-
-              {/* ── LEFT: text content ── */}
-              <div className="relative z-10 flex flex-col justify-center px-6 sm:px-8 py-6 w-[56%] sm:w-[52%] flex-shrink-0">
-                {/* Icon + title */}
-                <div className="flex items-center gap-3 mb-1.5">
-                  <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0 bg-gradient-to-br ${cat.iconBg} shadow-lg`}
-                  >
-                    {cat.icon}
-                  </div>
-                  <h2 className="text-2xl sm:text-[26px] font-black text-white leading-none font-['Outfit'] group-hover:text-orange-400 transition-colors">
-                    {cat.name}
-                  </h2>
-                </div>
-
-                {/* Recipe count */}
-                <p className="text-orange-400 text-xs font-bold tracking-wide mb-3 pl-[52px]">
-                  {cat.count} recipes
-                </p>
-
-                {/* Description */}
-                <p className="text-gray-400 text-xs sm:text-[13px] leading-relaxed mb-5 line-clamp-2 font-['Plus_Jakarta_Sans']">
-                  {cat.description}
-                </p>
-
-                {/* Explore button */}
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/recipes?category=${cat.name}`);
-                  }}
-                  className="w-fit flex items-center gap-2 btn-gradient-orange text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-md shadow-orange-500/25 transition-all group-hover:shadow-orange-500/40"
-                >
-                  Explore <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                </button>
-              </div>
-
-              {/* ── RIGHT: 3D Image ── */}
-              <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-black/40">
-                {/* Right-side color glow */}
+              <Card3D intensity={6} className="h-full">
                 <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background: `radial-gradient(ellipse at 60% 50%, ${cat.glow} 0%, transparent 70%)`,
-                  }}
-                />
-                <img
-                  src={cat.image}
-                  alt={cat.name}
-                  className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-95"
-                  onError={(e) => { e.target.src = '/images/cat_dinner_3d.jpg'; }}
-                />
-                {/* Left-fade overlay so image smoothly blends into the card */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0A0B0E]/80 via-transparent to-transparent pointer-events-none" />
-              </div>
+                  onClick={() => navigate(`/recipes?category=${cat.name}`)}
+                  className={`
+                    relative flex flex-row items-stretch h-full
+                    rounded-3xl overflow-hidden cursor-pointer group
+                    bg-gradient-to-r ${cat.cardBg}
+                    border ${cat.border}
+                    transition-all duration-300 shadow-xl hover:shadow-[0_8px_40px_rgba(255,107,0,0.2)]
+                    min-h-[200px] sm:min-h-[215px]
+                    ${cat.fullWidth ? 'md:min-h-[230px]' : ''}
+                  `}
+                  style={{ boxShadow: `0 8px 32px -6px ${cat.glow}` }}
+                >
+                  {/* ── Radial glow layer ── */}
+                  <div
+                    className="absolute inset-0 pointer-events-none"
+                    style={{
+                      background: `radial-gradient(ellipse at 35% 50%, ${cat.glow} 0%, transparent 65%)`,
+                    }}
+                  />
+
+                  {/* ── LEFT: text content ── */}
+                  <div className="relative z-10 flex flex-col justify-center px-6 sm:px-8 py-6 w-[56%] sm:w-[52%] flex-shrink-0 transform translate-z-[20px]">
+                    {/* Icon + title */}
+                    <div className="flex items-center gap-3 mb-1.5">
+                      <div
+                        className={`w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0 bg-gradient-to-br ${cat.iconBg} shadow-lg`}
+                      >
+                        {cat.icon}
+                      </div>
+                      <h2 className="text-2xl sm:text-[26px] font-black text-white leading-none font-['Outfit'] group-hover:text-orange-400 transition-colors">
+                        {cat.name}
+                      </h2>
+                    </div>
+
+                    {/* Recipe count */}
+                    <p className="text-orange-400 text-xs font-bold tracking-wide mb-3 pl-[52px]">
+                      {cat.count} recipes
+                    </p>
+
+                    {/* Description */}
+                    <p className="text-gray-400 text-xs sm:text-[13px] leading-relaxed mb-5 line-clamp-2 font-['Plus_Jakarta_Sans']">
+                      {cat.description}
+                    </p>
+
+                    {/* Explore button */}
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/recipes?category=${cat.name}`);
+                      }}
+                      className="w-fit flex items-center gap-2 btn-gradient-orange btn-3d text-white px-4 sm:px-5 py-2 sm:py-2.5 rounded-full font-bold text-xs sm:text-sm shadow-md shadow-orange-500/25 transition-all group-hover:shadow-orange-500/40"
+                    >
+                      Explore <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </div>
+
+                  {/* ── RIGHT: 3D Image ── */}
+                  <div className="relative flex-1 overflow-hidden flex items-center justify-center bg-black/40 transform translate-z-[10px]">
+                    {/* Right-side color glow */}
+                    <div
+                      className="absolute inset-0 pointer-events-none"
+                      style={{
+                        background: `radial-gradient(ellipse at 60% 50%, ${cat.glow} 0%, transparent 70%)`,
+                      }}
+                    />
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-95"
+                      onError={(e) => { e.target.src = '/images/cat_dinner_3d.jpg'; }}
+                    />
+                    {/* Left-fade overlay so image smoothly blends into the card */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#0A0B0E]/80 via-transparent to-transparent pointer-events-none" />
+                  </div>
+                </div>
+              </Card3D>
             </motion.article>
           ))}
         </div>
@@ -402,7 +408,7 @@ export default function Categories() {
               <p className="text-gray-400 text-xs">Try adjusting your filters above.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 perspective-container">
               {showcaseRecipes.map((recipe, i) => {
                 const isFav = favorites.includes(recipe.id);
                 return (
@@ -411,49 +417,55 @@ export default function Categories() {
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    onClick={() => navigate(`/recipe/${recipe.id}`)}
-                    className="bg-[#12141D] border border-white/5 hover:border-orange-500/30 rounded-3xl overflow-hidden cursor-pointer group transition-all duration-300 hover:-translate-y-1 shadow-[0_4px_24px_rgba(0,0,0,0.5)] flex flex-col"
+                    className="h-full"
                   >
-                    {/* Card image */}
-                    <div className="relative h-44 overflow-hidden bg-black flex-shrink-0">
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 z-10 pointer-events-none" />
-                      <img
-                        src={recipe.image}
-                        alt={recipe.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        onError={(e) => { e.target.src = '/images/cat_dinner_3d.jpg'; }}
-                      />
-                      {/* Favorite */}
-                      <button
-                        onClick={(e) => toggleFav(e, recipe.id)}
-                        className={`absolute top-3 right-3 z-20 w-8 h-8 rounded-full flex items-center justify-center transition-all ${
-                          isFav
-                            ? 'bg-red-500 text-white shadow-md shadow-red-500/40 scale-105'
-                            : 'bg-black/50 backdrop-blur-md text-white border border-white/10 hover:bg-black/70'
-                        }`}
+                    <Card3D intensity={10} className="h-full">
+                      <div
+                        onClick={() => navigate(`/recipe/${recipe.id}`)}
+                        className="bg-[#12141D] border border-white/5 h-full hover:border-orange-500/30 rounded-3xl overflow-hidden cursor-pointer group transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.5)] flex flex-col"
                       >
-                        <Heart size={14} fill={isFav ? 'currentColor' : 'none'} />
-                      </button>
-                      {/* Category badge */}
-                      <div className={`absolute bottom-3 left-3 z-20 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${getCategoryBadgeColor(recipe.category)}`}>
-                        {recipe.category}
-                      </div>
-                    </div>
+                        {/* Card image */}
+                        <div className="relative h-44 overflow-hidden bg-black flex-shrink-0 transform translate-z-[15px]">
+                          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/60 z-10 pointer-events-none" />
+                          <img
+                            src={recipe.image}
+                            alt={recipe.name}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            onError={(e) => { e.target.src = '/images/cat_dinner_3d.jpg'; }}
+                          />
+                          {/* Favorite */}
+                          <button
+                            onClick={(e) => toggleFav(e, recipe.id)}
+                            className={`absolute top-3 right-3 z-20 w-8 h-8 rounded-full btn-3d flex items-center justify-center transition-all ${
+                              isFav
+                                ? 'bg-red-500 text-white shadow-md shadow-red-500/40 scale-105'
+                                : 'bg-black/50 backdrop-blur-md text-white border border-white/10 hover:bg-black/70'
+                            }`}
+                          >
+                            <Heart size={14} fill={isFav ? 'currentColor' : 'none'} />
+                          </button>
+                          {/* Category badge */}
+                          <div className={`absolute bottom-3 left-3 z-20 px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${getCategoryBadgeColor(recipe.category)}`}>
+                            {recipe.category}
+                          </div>
+                        </div>
 
-                    {/* Card info */}
-                    <div className="p-4 flex flex-col gap-2 flex-1">
-                      <h3 className="font-extrabold text-sm text-white line-clamp-2 leading-snug group-hover:text-orange-400 transition-colors font-['Outfit']">
-                        {recipe.name}
-                      </h3>
-                      <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400 mt-0.5">
-                        <span className="flex items-center gap-1"><Clock size={10} /> {recipe.time}</span>
-                        <span className="flex items-center gap-1 text-orange-500"><Flame size={10} fill="currentColor" /> {recipe.difficulty}</span>
-                        <span className="flex items-center gap-1"><Users size={10} /> {recipe.servings}</span>
+                        {/* Card info */}
+                        <div className="p-4 flex flex-col gap-2 flex-1 transform translate-z-[25px]">
+                          <h3 className="font-extrabold text-sm text-white line-clamp-2 leading-snug group-hover:text-orange-400 transition-colors font-['Outfit']">
+                            {recipe.name}
+                          </h3>
+                          <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400 mt-0.5">
+                            <span className="flex items-center gap-1"><Clock size={10} /> {recipe.time}</span>
+                            <span className="flex items-center gap-1 text-orange-500"><Flame size={10} fill="currentColor" /> {recipe.difficulty}</span>
+                            <span className="flex items-center gap-1"><Users size={10} /> {recipe.servings}</span>
+                          </div>
+                          <button className="mt-auto text-orange-400 text-[11px] font-bold flex items-center gap-1 group-hover:gap-2 transition-all pt-1 border-t border-white/[0.04]">
+                            View Recipe <ArrowRight size={12} />
+                          </button>
+                        </div>
                       </div>
-                      <button className="mt-auto text-orange-400 text-[11px] font-bold flex items-center gap-1 group-hover:gap-2 transition-all pt-1 border-t border-white/[0.04]">
-                        View Recipe <ArrowRight size={12} />
-                      </button>
-                    </div>
+                    </Card3D>
                   </motion.div>
                 );
               })}

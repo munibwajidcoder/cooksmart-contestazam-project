@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ChefHat, Sparkles, X, User, Settings, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
 export default function UserPreferenceModal({ isOpen: externalIsOpen, onClose }) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState('');
@@ -46,18 +48,42 @@ export default function UserPreferenceModal({ isOpen: externalIsOpen, onClose })
     onClose?.();
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     if (!name.trim()) return;
+
     const userData = { name: name.trim(), preferredCategory };
+
+    // Save to localStorage immediately for instant UX
     localStorage.setItem('cooksmart_user', JSON.stringify(userData));
     setSavedUser(userData);
     setIsOpen(false);
     onClose?.();
+
+    // Also save to backend MongoDB (non-blocking)
+    console.log('🚀 Sending to backend:', API_URL, { name: userData.name, favoriteCategory: userData.preferredCategory });
+    try {
+      const res = await fetch(`${API_URL}/api/users`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: userData.name, favoriteCategory: userData.preferredCategory }),
+      });
+      console.log('📡 Backend response status:', res.status);
+      if (res.ok) {
+        const data = await res.json();
+        console.log('✅ Saved to MongoDB! User ID:', data.user._id);
+        // Store the MongoDB _id so we can link the meal plan later
+        localStorage.setItem('cooksmart_user_id', data.user._id);
+      }
+    } catch (err) {
+      console.warn('❌ Backend save failed (offline mode):', err.message);
+    }
   };
 
   const handleLogout = () => {
     localStorage.removeItem('cooksmart_user');
+    localStorage.removeItem('cooksmart_user_id');  // Clear MongoDB ID too
+    localStorage.removeItem('cooksmart_meal_plan'); // Clear local meal plan
     setSavedUser(null);
     setShowProfileMenu(false);
     onClose?.();

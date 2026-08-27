@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { allRecipes } from '../data/recipesData';
 import AddToMealPlannerModal from '../components/AddToMealPlannerModal';
+import Card3D from '../components/Card3D';
 
 const CATEGORIES = ['All', 'Breakfast', 'Lunch', 'Dinner', 'Snacks', 'Desserts'];
 
@@ -196,7 +197,7 @@ export default function Favourites() {
 
         {/* ══ RECIPES GRID ══ */}
         {filteredFavs.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-14 perspective-container">
             <AnimatePresence>
               {filteredFavs.map((recipe, i) => (
                 <motion.div
@@ -206,77 +207,83 @@ export default function Favourites() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.25, delay: i * 0.04 }}
-                  onClick={() => navigate(`/recipe/${recipe.id}`)}
-                  className="bg-[#12141D] border border-white/6 hover:border-orange-500/30 rounded-3xl overflow-hidden group cursor-pointer flex flex-col transition-all duration-300 hover:-translate-y-1 shadow-[0_4px_24px_rgba(0,0,0,0.5)]"
+                  className="h-full"
                 >
-                  {/* Image */}
-                  <div className="relative h-48 overflow-hidden bg-black flex-shrink-0">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-10 pointer-events-none" />
-                    
-                    <img
-                      src={recipe.image}
-                      alt={recipe.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      onError={e => { e.target.src = '/images/cat_dinner_3d.jpg'; }}
-                    />
-
-                    {/* Heart Remove Button */}
-                    <button
-                      onClick={(e) => removeFav(e, recipe.id)}
-                      title="Remove from favorites"
-                      className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white shadow-lg shadow-red-500/40 hover:bg-red-600 transition-all hover:scale-110"
+                  <Card3D intensity={10} className="h-full">
+                    <div
+                      onClick={() => navigate(`/recipe/${recipe.id}`)}
+                      className="bg-[#12141D] h-full border border-white/6 hover:border-orange-500/30 rounded-3xl overflow-hidden group cursor-pointer flex flex-col transition-all duration-300 shadow-[0_4px_24px_rgba(0,0,0,0.5)]"
                     >
-                      <Heart size={15} fill="currentColor" />
-                    </button>
+                      {/* Image */}
+                      <div className="relative h-48 overflow-hidden bg-black flex-shrink-0 transform translate-z-[15px]">
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent z-10 pointer-events-none" />
+                        
+                        <img
+                          src={recipe.image}
+                          alt={recipe.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={e => { e.target.src = '/images/cat_dinner_3d.jpg'; }}
+                        />
 
-                    {/* Category Badge */}
-                    <div className={`absolute bottom-3 left-3 z-20 px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider ${getCategoryBadgeColor(recipe.category)}`}>
-                      {recipe.category}
-                    </div>
+                        {/* Heart Remove Button */}
+                        <button
+                          onClick={(e) => removeFav(e, recipe.id)}
+                          title="Remove from favorites"
+                          className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-red-500 btn-3d flex items-center justify-center text-white shadow-lg shadow-red-500/40 hover:bg-red-600 transition-all hover:scale-110"
+                        >
+                          <Heart size={15} fill="currentColor" />
+                        </button>
 
-                    {/* Rating */}
-                    {recipe.rating && (
-                      <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-lg">
-                        ⭐ {recipe.rating}
+                        {/* Category Badge */}
+                        <div className={`absolute bottom-3 left-3 z-20 px-2.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wider ${getCategoryBadgeColor(recipe.category)}`}>
+                          {recipe.category}
+                        </div>
+
+                        {/* Rating */}
+                        {recipe.rating && (
+                          <div className="absolute top-3 left-3 z-20 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-yellow-400 text-[10px] font-bold px-2 py-1 rounded-lg">
+                            ⭐ {recipe.rating}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
 
-                  {/* Card Info */}
-                  <div className="p-4 flex flex-col flex-1">
-                    <h3 className="font-bold text-[15px] text-white leading-snug group-hover:text-orange-400 transition-colors font-['Outfit'] line-clamp-2 mb-2">
-                      {recipe.name}
-                    </h3>
+                      {/* Card Info */}
+                      <div className="p-4 flex flex-col flex-1 transform translate-z-[25px]">
+                        <h3 className="font-bold text-[15px] text-white leading-snug group-hover:text-orange-400 transition-colors font-['Outfit'] line-clamp-2 mb-2">
+                          {recipe.name}
+                        </h3>
 
-                    {/* Meta */}
-                    <div className="flex items-center gap-3 text-[11px] font-semibold text-gray-500 mb-2.5">
-                      <span className="flex items-center gap-1"><Clock size={11} /> {recipe.time}</span>
-                      <span className="flex items-center gap-1 text-orange-500"><Flame size={11} fill="currentColor" /> {recipe.difficulty}</span>
-                      <span className="flex items-center gap-1"><Users size={11} /> {recipe.servings}</span>
+                        {/* Meta */}
+                        <div className="flex items-center gap-3 text-[11px] font-semibold text-gray-500 mb-2.5">
+                          <span className="flex items-center gap-1"><Clock size={11} /> {recipe.time}</span>
+                          <span className="flex items-center gap-1 text-orange-500"><Flame size={11} fill="currentColor" /> {recipe.difficulty}</span>
+                          <span className="flex items-center gap-1"><Users size={11} /> {recipe.servings}</span>
+                        </div>
+
+                        <p className="text-[12px] text-gray-500 leading-relaxed line-clamp-2 mb-4 flex-1">
+                          {recipe.description}
+                        </p>
+
+                        {/* Bottom Actions */}
+                        <div className="mt-auto flex items-center justify-between pt-2 border-t border-white/[0.04]">
+                          <span className="text-orange-500 text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
+                            View Recipe <ArrowRight size={12} />
+                          </span>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setMealModalRecipe(recipe);
+                            }}
+                            title="Add to Meal Planner"
+                            className="w-8 h-8 rounded-xl btn-3d bg-[#181B26] hover:bg-orange-500/20 border border-white/10 hover:border-orange-500/40 flex items-center justify-center text-gray-400 hover:text-orange-400 transition-all"
+                          >
+                            <CalendarPlus size={15} />
+                          </button>
+                        </div>
+                      </div>
                     </div>
-
-                    <p className="text-[12px] text-gray-500 leading-relaxed line-clamp-2 mb-4 flex-1">
-                      {recipe.description}
-                    </p>
-
-                    {/* Bottom Actions */}
-                    <div className="mt-auto flex items-center justify-between pt-2 border-t border-white/[0.04]">
-                      <span className="text-orange-500 text-xs font-bold flex items-center gap-1 group-hover:gap-2 transition-all">
-                        View Recipe <ArrowRight size={12} />
-                      </span>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setMealModalRecipe(recipe);
-                        }}
-                        title="Add to Meal Planner"
-                        className="w-8 h-8 rounded-xl bg-[#181B26] hover:bg-orange-500/20 border border-white/10 hover:border-orange-500/40 flex items-center justify-center text-gray-400 hover:text-orange-400 transition-all"
-                      >
-                        <CalendarPlus size={15} />
-                      </button>
-                    </div>
-                  </div>
+                  </Card3D>
                 </motion.div>
               ))}
             </AnimatePresence>

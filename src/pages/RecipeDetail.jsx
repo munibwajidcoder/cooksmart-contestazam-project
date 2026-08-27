@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { allRecipes } from '../data/recipesData';
 import GroceryListModal from '../components/GroceryListModal';
 import AddToMealPlannerModal from '../components/AddToMealPlannerModal';
+import Card3D from '../components/Card3D';
 
 export default function RecipeDetail() {
   const { id } = useParams();
@@ -288,11 +289,11 @@ export default function RecipeDetail() {
             </div>
 
             {/* Action Buttons Row */}
-            <div className="flex flex-wrap items-center gap-3.5 mb-10 w-full">
+            <div className="flex flex-wrap items-center gap-3.5 mb-10 w-full perspective-container">
               <button 
                 onClick={toggleFavorite}
                 title={isFav ? 'Remove from favorites' : 'Add to favorites'}
-                className={`w-14 h-14 shrink-0 rounded-full flex items-center justify-center transition-all ${
+                className={`w-14 h-14 shrink-0 rounded-full btn-3d flex items-center justify-center transition-all ${
                   isFav 
                     ? 'bg-red-500 text-white shadow-lg shadow-red-500/40 scale-105' 
                     : 'bg-[#161922] border border-white/10 text-orange-500 hover:bg-white/5'
@@ -303,7 +304,7 @@ export default function RecipeDetail() {
 
               <button 
                 onClick={() => setIsMealModalOpen(true)}
-                className="flex-1 min-w-[200px] min-h-[56px] py-2 px-4 bg-[#161922] hover:bg-[#1f232f] hover:border-orange-500/40 border border-white/10 rounded-full flex items-center justify-center gap-3 text-white font-bold transition-all text-sm sm:text-base shadow-md group leading-snug"
+                className="flex-1 min-w-[200px] min-h-[56px] py-2 px-4 btn-3d bg-[#161922] hover:bg-[#1f232f] hover:border-orange-500/40 border border-white/10 rounded-full flex items-center justify-center gap-3 text-white font-bold transition-all text-sm sm:text-base shadow-md group leading-snug"
               >
                 <Calendar size={20} className="text-orange-400 shrink-0 group-hover:scale-110 transition-transform" /> 
                 <span className="text-center">Add to Meal Planner</span>
@@ -312,7 +313,7 @@ export default function RecipeDetail() {
               <button 
                 onClick={handleShare}
                 title="Share Recipe link"
-                className="w-14 h-14 shrink-0 rounded-full bg-[#161922] hover:bg-[#1f232f] border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all hover:border-orange-500/30"
+                className="w-14 h-14 shrink-0 rounded-full btn-3d bg-[#161922] hover:bg-[#1f232f] border border-white/10 flex items-center justify-center text-gray-300 hover:text-white transition-all hover:border-orange-500/30"
               >
                 <Share2 size={20} />
               </button>
@@ -419,9 +420,14 @@ export default function RecipeDetail() {
                     style={{ animationDuration: '6s' }} 
                     onError={(e) => { e.target.src = '/images/cat_dinner_3d.jpg'; }}
                   />
-                  {/* Hint indicator */}
-                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/60 backdrop-blur-sm border border-white/10 text-white/70 px-4 py-1.5 rounded-full text-xs font-bold tracking-wider flex items-center gap-2 opacity-100 group-hover:opacity-0 transition-opacity">
-                    <PlayCircle size={14} className="text-orange-500" /> Hover for Video
+                  {/* Hint indicator overlay */}
+                  <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/20 rounded-[3rem] opacity-100 group-hover:opacity-0 transition-opacity">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 bg-orange-500/90 backdrop-blur-md text-white rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(255,107,0,0.6)] mb-3">
+                      <PlayCircle size={40} className="ml-1" />
+                    </div>
+                    <div className="bg-black/70 backdrop-blur-md border border-white/20 text-white px-5 py-2 rounded-full text-xs sm:text-sm font-bold tracking-wide shadow-lg">
+                      Tap / Hover to Watch Video
+                    </div>
                   </div>
                 </div>
 
@@ -431,8 +437,14 @@ export default function RecipeDetail() {
                     <iframe 
                       width="100%" 
                       height="100%" 
-                      src="https://www.youtube.com/embed/dQw4w9WgXcQ?rel=0&showinfo=0" 
-                      title="Recipe Video Tutorial" 
+                      src={`https://www.youtube.com/embed/${
+                        recipe?.category?.toLowerCase() === 'breakfast' ? 'f_Lk4KJPQE0' :
+                        recipe?.category?.toLowerCase() === 'lunch'     ? 'ZJy1ajvMU1k' :
+                        recipe?.category?.toLowerCase() === 'snacks'    ? 'tNDN1WETCZA' :
+                        recipe?.category?.toLowerCase() === 'desserts'  ? 'cFAa15TKACE' :
+                        'ySL0kPOkHG8'  // default: dinner / Pakistani cooking
+                      }?rel=0&showinfo=0&modestbranding=1`}
+                      title={`${recipe?.name} - Cooking Video Tutorial`}
                       frameBorder="0" 
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                       allowFullScreen
@@ -442,6 +454,13 @@ export default function RecipeDetail() {
                 </div>
               </div>
             </motion.div>
+            
+            {/* Hint text below the image */}
+            <div className="text-center mb-8 -mt-2">
+              <p className="text-gray-400 text-xs sm:text-sm font-['Plus_Jakarta_Sans'] font-medium flex items-center justify-center gap-1.5 opacity-80">
+                <PlayCircle size={15} className="text-orange-500" /> Click or Tap the image to watch the recipe video
+              </p>
+            </div>
 
             {/* Preparation Steps Box */}
             <div className="w-full glass-panel rounded-3xl p-6 sm:p-8 lg:p-10 border border-white/10 relative overflow-hidden">
@@ -592,45 +611,46 @@ export default function RecipeDetail() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 perspective-container">
             {visibleSimilar.map((simRecipe) => (
-              <div 
-                key={simRecipe.id}
-                onClick={() => navigate(`/recipe/${simRecipe.id}`)}
-                className="bg-[#12141D]/90 border border-white/5 hover:border-orange-500/30 rounded-3xl overflow-hidden group cursor-pointer flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.4)] transition-all duration-300 hover:-translate-y-1"
-              >
-                <div className="relative h-48 w-full overflow-hidden bg-black flex items-center justify-center rounded-t-3xl">
-                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 z-10 pointer-events-none" />
-                  <img 
-                    src={simRecipe.image} 
-                    alt={simRecipe.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    style={{ objectPosition: 'center' }}
-                    onError={(e) => { e.target.src = '/images/cat_dinner_3d.jpg'; }}
-                  />
-                  <div className={`absolute bottom-3 left-4 z-20 px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase ${getCategoryColor(simRecipe.category)} shadow-md`}>
-                    {simRecipe.category}
+              <Card3D key={simRecipe.id} intensity={12} className="h-full">
+                <div 
+                  onClick={() => navigate(`/recipe/${simRecipe.id}`)}
+                  className="bg-[#12141D]/90 h-full border border-white/5 hover:border-orange-500/30 rounded-3xl overflow-hidden group cursor-pointer flex flex-col shadow-[0_8px_30px_rgba(0,0,0,0.4)] transition-all duration-300"
+                >
+                  <div className="relative h-48 w-full overflow-hidden bg-black flex items-center justify-center rounded-t-3xl transform translate-z-[15px]">
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 z-10 pointer-events-none" />
+                    <img 
+                      src={simRecipe.image} 
+                      alt={simRecipe.name} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      style={{ objectPosition: 'center' }}
+                      onError={(e) => { e.target.src = '/images/cat_dinner_3d.jpg'; }}
+                    />
+                    <div className={`absolute bottom-3 left-4 z-20 px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase ${getCategoryColor(simRecipe.category)} shadow-md`}>
+                      {simRecipe.category}
+                    </div>
                   </div>
-                </div>
 
-                <div className="p-5 flex flex-col flex-1">
-                  <h3 className="font-extrabold text-lg text-white mb-3 line-clamp-1 group-hover:text-orange-400 transition-colors font-['Outfit']">
-                    {simRecipe.name}
-                  </h3>
-                  
-                  <div className="flex items-center gap-4 text-[11px] font-bold text-gray-400 mt-auto">
-                    <div className="flex items-center gap-1.5">
-                      <Clock size={13} className="text-gray-400" /> {simRecipe.time}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-orange-500">
-                      <Flame size={13} fill="currentColor" /> {simRecipe.difficulty}
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Users size={13} className="text-gray-400" /> {simRecipe.servings}
+                  <div className="p-5 flex flex-col flex-1 transform translate-z-[25px]">
+                    <h3 className="font-extrabold text-lg text-white mb-3 line-clamp-1 group-hover:text-orange-400 transition-colors font-['Outfit']">
+                      {simRecipe.name}
+                    </h3>
+                    
+                    <div className="flex items-center gap-4 text-[11px] font-bold text-gray-400 mt-auto">
+                      <div className="flex items-center gap-1.5">
+                        <Clock size={13} className="text-gray-400" /> {simRecipe.time}
+                      </div>
+                      <div className="flex items-center gap-1.5 text-orange-500">
+                        <Flame size={13} fill="currentColor" /> {simRecipe.difficulty}
+                      </div>
+                      <div className="flex items-center gap-1.5">
+                        <Users size={13} className="text-gray-400" /> {simRecipe.servings}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Card3D>
             ))}
           </div>
         </div>

@@ -227,3 +227,282 @@
   box-sizing: border-box;
   min-width: 0;
 }
+
+/* ════════════════════════════════════════════════
+   3D ANIMATION SYSTEM
+════════════════════════════════════════════════ */
+
+/* 3D Perspective Container */
+.perspective-container {
+  perspective: 1200px;
+  perspective-origin: center center;
+}
+
+/* 3D Card Base */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1),
+              box-shadow 0.4s ease;
+  will-change: transform;
+}
+.card-3d:hover {
+  transform: translateY(-8px) rotateX(4deg) rotateY(-2deg) scale(1.02);
+  box-shadow: 0 30px 60px -12px rgba(0,0,0,0.7), 
+              0 0 40px -8px rgba(255,107,0,0.2);
+}
+
+/* 3D Button Press Effect */
+.btn-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  will-change: transform;
+}
+.btn-3d:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 28px -4px rgba(255,107,0,0.4);
+}
+.btn-3d:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 0 4px 12px -2px rgba(255,107,0,0.3);
+}
+
+/* 3D Card Tilt (JS-enhanced via data attribute) */
+.tilt-card {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease;
+  will-change: transform;
+}
+.tilt-card .tilt-content {
+  transform: translateZ(30px);
+}
+.tilt-card .tilt-shine {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.tilt-card:hover .tilt-shine {
+  opacity: 1;
+}
+
+/* Depth Layer (element appears to float above card) */
+.depth-layer {
+  transform: translateZ(20px);
+}
+.depth-layer-deep {
+  transform: translateZ(40px);
+}
+
+/* 3D Entrance Animations */
+@keyframes slideIn3D {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateX(25deg) translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateX(0deg) translateY(0);
+  }
+}
+
+@keyframes slideInLeft3D {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateY(30deg) translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateY(0deg) translateX(0);
+  }
+}
+
+@keyframes popIn3D {
+  0%   { opacity: 0; transform: perspective(600px) scale(0.7) rotateY(-20deg); }
+  70%  { transform: perspective(600px) scale(1.04) rotateY(3deg); }
+  100% { opacity: 1; transform: perspective(600px) scale(1) rotateY(0); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0px) rotateX(0deg); }
+  50%       { transform: translateY(-12px) rotateX(3deg); }
+}
+
+@keyframes shimmer3D {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes rotateIn {
+  from { opacity: 0; transform: rotate3d(1,1,0,60deg) scale(0.8); }
+  to   { opacity: 1; transform: rotate3d(0,0,0,0deg) scale(1); }
+}
+
+/* Animation Classes */
+.animate-slideIn3D {
+  animation: slideIn3D 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+.animate-slideInLeft3D {
+  animation: slideInLeft3D 0.7s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+.animate-popIn3D {
+  animation: popIn3D 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+.animate-floatY {
+  animation: floatY 5s ease-in-out infinite;
+}
+.animate-rotateIn {
+  animation: rotateIn 0.6s cubic-bezier(0.23, 1, 0.32, 1) forwards;
+}
+
+/* Shimmer / Holographic badge */
+.shimmer-3d {
+  background: linear-gradient(
+    120deg,
+    rgba(255,107,0,0.15) 0%,
+    rgba(255,255,255,0.25) 40%,
+    rgba(255,107,0,0.15) 80%
+  );
+  background-size: 200% auto;
+  animation: shimmer3D 3s linear infinite;
+}
+
+/* 3D Icon Box */
+.icon-3d {
+  transform-style: preserve-3d;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.icon-3d:hover {
+  transform: translateZ(12px) rotateY(15deg) scale(1.1);
+  box-shadow: -8px 8px 24px rgba(0,0,0,0.4);
+}
+
+/* Stagger animation delays for grids */
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.30s; }
+
+/* 3D border glow pulse */
+@keyframes borderGlow3D {
+  0%, 100% { box-shadow: 0 0 15px -3px rgba(255,107,0,0.3), inset 0 1px 0 rgba(255,255,255,0.05); }
+  50%       { box-shadow: 0 0 30px -3px rgba(255,107,0,0.5), inset 0 1px 0 rgba(255,255,255,0.10); }
+}
+.border-glow-3d {
+  animation: borderGlow3D 4s ease-in-out infinite;
+}
+
+/* ── Mobile Performance Optimizations ── */
+.animate-float,
+.animate-float-slow,
+.animate-float-reverse,
+.animate-pulse-glow,
+.flip-card-inner {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+@media (max-width: 768px) {
+  .glass-panel {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Simplify 3D on mobile to reduce GPU load */
+  .card-3d:hover {
+    transform: translateY(-4px) scale(1.01);
+  }
+
+  .animate-float,
+  .animate-float-slow,
+  .animate-float-reverse {
+    animation: none !important;
+  }
+
+  .animate-pulse-glow {
+    animation-duration: 6s;
+  }
+
+  .glass-panel-hover {
+    transition: all 0.15s ease;
+  }
+
+  img {
+    content-visibility: auto;
+  }
+
+  .hide-scrollbar,
+  .custom-scrollbar {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ── Smooth scroll for all devices ── */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* ── Mobile Performance Optimizations ── */
+/* GPU accelerate animated elements */
+.animate-float,
+.animate-float-slow,
+.animate-float-reverse,
+.animate-pulse-glow,
+.flip-card-inner {
+  will-change: transform;
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* Reduce heavy backdrop-blur on mobile to save GPU */
+@media (max-width: 768px) {
+  .glass-panel {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Disable floating animation on mobile — saves CPU */
+  .animate-float,
+  .animate-float-slow,
+  .animate-float-reverse {
+    animation: none !important;
+  }
+
+  /* Reduce pulse animation speed on mobile */
+  .animate-pulse-glow {
+    animation-duration: 6s;
+  }
+
+  /* Faster hover transitions on mobile (touch feels snappier) */
+  .glass-panel-hover {
+    transition: all 0.15s ease;
+  }
+
+  /* Ensure images are crisp and lazy-loadable */
+  img {
+    content-visibility: auto;
+  }
+
+  /* Better touch scrolling */
+  .hide-scrollbar,
+  .custom-scrollbar {
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ── Image Lazy Loading Helper ── */
+img {
+  loading: lazy;
+}
+
+/* ── Smooth scroll for all devices ── */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}

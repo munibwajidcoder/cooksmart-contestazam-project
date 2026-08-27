@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { 
   ChevronLeft, ChevronRight, X, Plus, ShoppingCart, Share2, Clock, 
   Search, Grid, Flame, RotateCcw, Check, Sparkles 
@@ -7,6 +7,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { allRecipes } from '../data/recipesData';
 import GroceryListModal from '../components/GroceryListModal';
+import Card3D from '../components/Card3D';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
@@ -72,6 +75,43 @@ export default function MealPlanner() {
     return INITIAL_PLAN;
   });
 
+  // ── Load from Backend on Mount ──────────────────────────────
+  useEffect(() => {
+    const userId = localStorage.getItem('cooksmart_user_id');
+    if (!userId) return; // Not logged in yet
+
+    fetch(`${API_URL}/api/meals/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.weekData && Object.keys(data.weekData).length > 0) {
+          setPlan(data.weekData);
+        }
+      })
+      .catch(err => console.warn('Could not load meal plan from backend:', err.message));
+  }, []);
+
+  // ── Auto-Save plan to backend whenever it changes ───────────
+  const savePlanToBackend = useCallback(async (newPlan) => {
+    const userId = localStorage.getItem('cooksmart_user_id');
+    if (!userId) return; // Strictly require user login!
+    
+    console.log(`🚀 Sending meal plan to backend for user: ${userId}`);
+    try {
+      const res = await fetch(`${API_URL}/api/meals`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, weekData: newPlan }),
+      });
+      if (res.ok) {
+        console.log('✅ Meal plan saved to MongoDB Atlas successfully!');
+      } else {
+        console.error('❌ Failed to save meal plan, status:', res.status);
+      }
+    } catch (err) {
+      console.error('❌ Meal plan backend save failed:', err.message);
+    }
+  }, []);
+
   // Modal states
   const [addModal, setAddModal] = useState(null); // { day, row }
   const [modalSearch, setModalSearch] = useState('');
@@ -79,14 +119,17 @@ export default function MealPlanner() {
   const [isGroceryModalOpen, setIsGroceryModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
-  // Sync to localStorage
+  // Sync to localStorage + Backend
   const savePlan = (updated) => {
     setPlan(updated);
+    // Local cache
     try {
       localStorage.setItem('cooksmart_meal_plan', JSON.stringify(updated));
     } catch (e) {
       console.error(e);
     }
+    // Backend sync
+    savePlanToBackend(updated);
   };
 
   const showToast = (msg, icon = '✓') => {
@@ -135,6 +178,12 @@ export default function MealPlanner() {
   };
 
   const addMealFromModal = (recipe) => {
+    const userId = localStorage.getItem('cooksmart_user_id');
+    if (!userId) {
+      showToast('❌ Please create a profile (Sign In) first to add meals!', '⚠️');
+      return;
+    }
+
     if (!addModal) return;
     const { day, row } = addModal;
     const updated = {
@@ -313,11 +362,11 @@ export default function MealPlanner() {
           </div>
 
           {/* Right: Week Navigator Controls */}
-          <div className="flex items-center gap-2.5 self-start lg:self-center shrink-0 flex-wrap bg-[#141722]/90 border border-white/10 p-2 rounded-2xl shadow-xl">
+          <div className="flex items-center gap-2.5 self-start lg:self-center shrink-0 flex-wrap bg-[#141722]/90 border border-white/10 p-2 rounded-2xl shadow-xl perspective-container">
             <button 
               onClick={() => setWeekOffset(prev => prev - 1)}
               title="Previous Week"
-              className="w-10 h-10 rounded-xl bg-[#1A1D2B] border border-white/10 flex items-center justify-center text-white hover:bg-orange-500/20 hover:border-orange-500/40 transition-all"
+              className="w-10 h-10 btn-3d rounded-xl bg-[#1A1D2B] border border-white/10 flex items-center justify-center text-white hover:bg-orange-500/20 hover:border-orange-500/40 transition-all"
             >
               <ChevronLeft size={18} />
             </button>
@@ -329,7 +378,7 @@ export default function MealPlanner() {
             <button 
               onClick={() => setWeekOffset(prev => prev + 1)}
               title="Next Week"
-              className="w-10 h-10 rounded-xl bg-[#1A1D2B] border border-white/10 flex items-center justify-center text-white hover:bg-orange-500/20 hover:border-orange-500/40 transition-all"
+              className="w-10 h-10 btn-3d rounded-xl bg-[#1A1D2B] border border-white/10 flex items-center justify-center text-white hover:bg-orange-500/20 hover:border-orange-500/40 transition-all"
             >
               <ChevronRight size={18} />
             </button>
@@ -390,7 +439,7 @@ export default function MealPlanner() {
                     <span className="text-white text-xs font-bold tracking-wide">{row.label}</span>
                   </div>
                 </div>
-                <div className="flex-1 grid grid-cols-7 gap-3">
+                <div className="flex-1 grid grid-cols-7 gap-3 perspective-container">
                   {weekDays.map(day => {
                     const meal = plan[day.key]?.[row.key];
                     return (
@@ -402,27 +451,33 @@ export default function MealPlanner() {
                               initial={{ opacity: 0, scale: 0.92 }}
                               animate={{ opacity: 1, scale: 1 }}
                               exit={{ opacity: 0, scale: 0.88 }}
-                              onClick={() => navigate(`/recipe/${meal.id}`)}
-                              className="relative bg-[#141722] border border-white/10 hover:border-orange-500/40 rounded-3xl overflow-hidden group h-full cursor-pointer transition-all duration-300 hover:-translate-y-1 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex flex-col"
+                              className="h-full"
                             >
-                              <button
-                                onClick={(e) => { e.stopPropagation(); removeMeal(day.key, row.key); }}
-                                title="Remove meal"
-                                className="absolute top-2.5 right-2.5 z-20 w-6 h-6 bg-black/70 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600 hover:border-red-500"
-                              >
-                                <X size={12} strokeWidth={3} />
-                              </button>
-                              <div className="w-full h-[85px] overflow-hidden bg-black relative flex-shrink-0">
-                                <img src={meal.image} alt={meal.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={e => { e.target.src = '/images/cat_dinner_3d.jpg'; }} />
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#141722] via-transparent to-transparent" />
-                              </div>
-                              <div className="p-2.5 flex flex-col flex-1 justify-between">
-                                <p className="text-white text-xs font-bold leading-snug line-clamp-2 group-hover:text-orange-400 transition-colors font-['Outfit']">{meal.name}</p>
-                                <div className="flex items-center gap-1 text-gray-400 text-[10px] font-semibold mt-1">
-                                  <Clock size={10} className="text-orange-400" />
-                                  <span>{meal.time}</span>
+                              <Card3D intensity={12} className="h-full">
+                                <div
+                                  onClick={() => navigate(`/recipe/${meal.id}`)}
+                                  className="relative bg-[#141722] border border-white/10 hover:border-orange-500/40 rounded-3xl overflow-hidden group h-full cursor-pointer transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)] flex flex-col"
+                                >
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); removeMeal(day.key, row.key); }}
+                                    title="Remove meal"
+                                    className="absolute top-2.5 right-2.5 z-20 w-6 h-6 btn-3d bg-black/70 backdrop-blur-md border border-white/20 rounded-full flex items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-all hover:bg-red-600 hover:border-red-500"
+                                  >
+                                    <X size={12} strokeWidth={3} />
+                                  </button>
+                                  <div className="w-full h-[85px] overflow-hidden bg-black relative flex-shrink-0 transform translate-z-[15px]">
+                                    <img src={meal.image} alt={meal.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onError={e => { e.target.src = '/images/cat_dinner_3d.jpg'; }} />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#141722] via-transparent to-transparent" />
+                                  </div>
+                                  <div className="p-2.5 flex flex-col flex-1 justify-between transform translate-z-[25px]">
+                                    <p className="text-white text-xs font-bold leading-snug line-clamp-2 group-hover:text-orange-400 transition-colors font-['Outfit']">{meal.name}</p>
+                                    <div className="flex items-center gap-1 text-gray-400 text-[10px] font-semibold mt-1">
+                                      <Clock size={10} className="text-orange-400" />
+                                      <span>{meal.time}</span>
+                                    </div>
+                                  </div>
                                 </div>
-                              </div>
+                              </Card3D>
                             </motion.div>
                           ) : (
                             <motion.button

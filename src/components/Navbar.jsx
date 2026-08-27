@@ -8,6 +8,7 @@ const navLinks = [
   { name: 'Recipes', path: '/recipes', icon: BookOpen },
   { name: 'Categories', path: '/categories', icon: Grid },
   { name: 'Meal Planner', path: '/meal-planner', icon: Calendar },
+  { name: 'Cooking Tips', path: '/cooking-tips', icon: Sparkles },
   { name: 'Favourites', path: '/favourites', icon: Heart },
   { name: 'About Us', path: '/about-us', icon: Info },
   { name: 'Contact', path: '/contact', icon: Mail },

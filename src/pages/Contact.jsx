@@ -5,6 +5,7 @@ import {
   ChevronRight, MapPin, Mail, Phone, Clock,
   Star, Send, Lock, Plus,
 } from 'lucide-react';
+import Card3D from '../components/Card3D';
 
 // ── Inline social icons (lucide-react doesn't include social brands) ──────────
 const IconInstagram = () => (
@@ -235,15 +236,17 @@ export default function Contact() {
         {/* ══════════════════════════════════════════
             TWO-COLUMN — GET IN TOUCH + FORM
         ══════════════════════════════════════════ */}
-        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-8 mb-5">
+        <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-8 mb-5 perspective-container">
 
           {/* ── LEFT: Get in Touch card ── */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-[#12141D] border border-white/8 rounded-3xl p-6 flex flex-col gap-6"
+            className="h-full"
           >
+            <Card3D intensity={5} className="h-full">
+              <div className="bg-[#12141D] h-full border border-white/8 rounded-3xl p-6 flex flex-col gap-6 shadow-[0_4px_30px_rgba(0,0,0,0.4)] transform translate-z-[15px]">
             <div>
               <h2 className="text-xl font-black text-white font-['Outfit'] mb-5">
                 Get in <span className="text-orange-400">Touch</span>
@@ -274,7 +277,7 @@ export default function Contact() {
                     key={i}
                     href="#"
                     aria-label={s.label}
-                    className={`w-10 h-10 rounded-full ${s.bg} flex items-center justify-center text-white shadow-md hover:scale-110 hover:opacity-90 transition-all`}
+                    className={`w-10 h-10 rounded-full btn-3d ${s.bg} flex items-center justify-center text-white shadow-md hover:opacity-90 transition-all`}
                   >
                     {s.icon}
                   </a>
@@ -292,6 +295,8 @@ export default function Contact() {
                 onError={e => { e.target.style.display = 'none'; }}
               />
             </div>
+              </div>
+            </Card3D>
           </motion.div>
 
           {/* ── RIGHT: Contact Form ── */}
@@ -299,8 +304,10 @@ export default function Contact() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="bg-[#12141D] border border-white/8 rounded-3xl p-6 sm:p-8"
+            className="h-full"
           >
+            <Card3D intensity={3} className="h-full">
+              <div className="bg-[#12141D] h-full border border-white/8 rounded-3xl p-6 sm:p-8 shadow-[0_4px_30px_rgba(0,0,0,0.4)] transform translate-z-[15px]">
             {submitted ? (
               <div className="h-full flex flex-col items-center justify-center text-center py-12 gap-5">
                 <div className="w-20 h-20 rounded-full bg-green-500/15 border border-green-500/30 flex items-center justify-center text-4xl shadow-lg shadow-green-500/10">
@@ -397,7 +404,7 @@ export default function Contact() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="btn-gradient-orange text-white px-8 py-3.5 rounded-full font-bold text-sm shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 flex items-center gap-2.5 transition-all disabled:opacity-70"
+                      className="btn-3d btn-gradient-orange text-white px-8 py-3.5 rounded-full font-bold text-sm shadow-lg shadow-orange-500/30 hover:shadow-orange-500/50 flex items-center gap-2.5 transition-all disabled:opacity-70"
                     >
                       {loading ? (
                         <>
@@ -419,6 +426,8 @@ export default function Contact() {
                 </form>
               </>
             )}
+              </div>
+            </Card3D>
           </motion.div>
         </div>
 
@@ -429,8 +438,10 @@ export default function Contact() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-5 rounded-3xl overflow-hidden border border-white/8 bg-[#12141D] flex flex-col sm:flex-row items-stretch min-h-[200px]"
+          className="mb-5 rounded-3xl overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.4)] perspective-container"
         >
+          <Card3D intensity={5} className="w-full">
+            <div className="border border-white/8 bg-[#12141D] flex flex-col sm:flex-row items-stretch min-h-[200px] rounded-3xl overflow-hidden transform translate-z-[15px]">
           {/* Left: text */}
           <div className="p-7 sm:p-8 flex flex-col justify-center sm:w-[280px] shrink-0 border-b sm:border-b-0 sm:border-r border-white/6">
             <h2 className="text-xl sm:text-2xl font-black text-white font-['Outfit'] mb-2">
@@ -465,7 +476,9 @@ export default function Contact() {
                 CookSmart HQ
               </div>
             </div>
-          </div>
+            </div>
+            </div>
+          </Card3D>
         </motion.section>
 
         {/* ══════════════════════════════════════════
@@ -475,8 +488,10 @@ export default function Contact() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="rounded-3xl overflow-hidden border border-white/8 bg-[#12141D] flex flex-col sm:flex-row items-stretch"
+          className="rounded-3xl overflow-hidden shadow-[0_4px_30px_rgba(0,0,0,0.4)] perspective-container mb-12"
         >
+          <Card3D intensity={5} className="w-full">
+            <div className="border border-white/8 bg-[#12141D] flex flex-col sm:flex-row items-stretch rounded-3xl overflow-hidden transform translate-z-[15px]">
           {/* Left: label + image */}
           <div className="sm:w-[280px] shrink-0 border-b sm:border-b-0 sm:border-r border-white/6 flex flex-col">
             <div className="p-7 sm:p-8 flex flex-col justify-start flex-1">
@@ -506,6 +521,8 @@ export default function Contact() {
               <FaqItem key={i} faq={faq} />
             ))}
           </div>
+          </div>
+          </Card3D>
         </motion.section>
 
       </div>
