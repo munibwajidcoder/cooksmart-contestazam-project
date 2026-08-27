@@ -37,14 +37,14 @@ const tipsData = [
 
 const videosData = [
   {
-    id: "f_Lk4KJPQE0",
-    title: "Pakistani Breakfast Recipes — Quick & Easy",
-    author: "Cooking with Asifa"
+    id: "ugMObzPrJ-8",
+    title: "10 Kitchen Hacks & Tips - Food Fusion",
+    author: "Food Fusion"
   },
   {
-    id: "ZJy1ajvMU1k",
-    title: "10 Essential Pakistani Cooking Techniques",
-    author: "Zubaida Tariq Kitchen"
+    id: "-66iEK-TmS8",
+    title: "Time Saving Kitchen Tips in Urdu",
+    author: "Kitchen Hacks"
   }
 ];
 
