@@ -10,6 +10,7 @@ import {
 import { categoriesData, popularRecipes, cookingTipsData } from '../data/recipesData';
 import AISuggestionModal from '../components/AISuggestionModal';
 import Card3D from '../components/Card3D';
+import AnimatedBurger3D from '../components/AnimatedBurger3D';
 import { useNavigate } from 'react-router-dom';
 
 export default function Home({ onOpenAI, onOpenUserPreference }) {
@@ -143,22 +144,15 @@ export default function Home({ onOpenAI, onOpenUserPreference }) {
           </motion.form>
         </div>
         
-        {/* Right 3D Visual Centerpiece */}
+        {/* Right — Animated 3D Burger */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }} 
+          initial={{ opacity: 0, scale: 0.92 }} 
           animate={{ opacity: 1, scale: 1 }} 
-          transition={{ duration: 0.8, type: 'spring', bounce: 0.2 }}
-          className="w-full lg:w-[50%] flex items-center justify-center relative py-12 lg:py-0"
+          transition={{ duration: 0.9, type: 'spring', bounce: 0.25 }}
+          style={{ y: burgerY, rotate: burgerRotate, scale: burgerScale }}
+          className="w-full lg:w-[50%] flex items-center justify-center relative py-8 lg:py-0"
         >
-          {/* Subtle Orange Atmospheric Glow */}
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[250px] sm:w-[400px] h-[250px] sm:h-[400px] bg-gradient-to-tr from-orange-500/20 to-amber-500/20 rounded-full blur-[80px] pointer-events-none" />
-          
-          <motion.img 
-            src="/images/hero_burger.png" 
-            alt="Premium Hero Burger" 
-            style={{ y: burgerY, rotate: burgerRotate, scale: burgerScale }}
-            className="w-[85%] sm:w-[75%] lg:w-[85%] max-w-[600px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] z-10"
-          />
+          <AnimatedBurger3D />
         </motion.div>
       </section>
 
