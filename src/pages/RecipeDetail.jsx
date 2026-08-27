@@ -437,13 +437,7 @@ export default function RecipeDetail() {
                     <iframe 
                       width="100%" 
                       height="100%" 
-                      src={`https://www.youtube.com/embed/${
-                        recipe?.category?.toLowerCase() === 'breakfast' ? 'SV0JABUctlE' :
-                        recipe?.category?.toLowerCase() === 'lunch'     ? 'hu-E2sKXR3I' :
-                        recipe?.category?.toLowerCase() === 'snacks'    ? 'l_WGkPzLHbA' :
-                        recipe?.category?.toLowerCase() === 'desserts'  ? '9M--Habno0o' :
-                        'hjH-Sl-UWPc'  // default: dinner / Pakistani cooking
-                      }?rel=0&showinfo=0&modestbranding=1`}
+                      src={`https://www.youtube.com/embed/${recipe.videoId || 'hjH-Sl-UWPc'}?rel=0&showinfo=0&modestbranding=1`}
                       title={`${recipe?.name} - Cooking Video Tutorial`}
                       frameBorder="0" 
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
